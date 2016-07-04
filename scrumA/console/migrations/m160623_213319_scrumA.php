@@ -15,39 +15,49 @@ class m160623_213319_scrumA extends Migration
 
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-      
-         $this->createTable('{{%integrantes}}', [
-            'Id' => $this->primaryKey(),
-            'nombre' => $this->string()->notNull()->unique(),
-            'correo' => $this->string()->notNull(),
-            'telefono' => $this->string()->notNull(),
-            'contrasenia' => $this->string()->notNull()->unique(),
-             'idHistorias'=> $this->integer(),
-           ], $tableOptions);
+         $this->createTable('{{%Administrador}}', [
+             'Id'=>  $this->primaryKey(),
+             'NombreCompleto'=>$this->string(100)->notNull(),
+             'Telefono'=>$this->string(10)->notNull(),
+             'Id_user'=>$this->integer()->notNull(),
+         ], $tableOptions);
          
-         $this->createTable('{{%historias}}',[
-             'id'=>$this->primaryKey(),
-             'nombreHistoria'=>  $this->string()->notNull()->unique(),
-             'numeroHistoria'=> $this->string()->notNull()->unique(),
-             'descripcionHistoria'=>  $this->text(),
-             'pesoHistoria'=>  $this->string()->notNull()->unique(),
-             'status'=>  $this->string()->notNull()->unique(),
-             'idSprint'=> $this->integer(),
+         $this->createTable('{{%Integrantes}}', [
+            'Id' => $this->primaryKey(),
+            'NombreCompleto' => $this->string()->notNull(),
+            'Telefono' => $this->string()->notNull(),
+            'Id_user'=>$this->integer()->notNull(),
+           ], $tableOptions);
+        
+         
+         $this->createTable('{{%Historias}}',[
+             'Id'=>$this->primaryKey(),
+             'NombreHistoria'=>  $this->string()->notNull(),
+             'NumeroHistoria'=> $this->integer()->notNull()->unique(),
+             'DescripcionHistoria'=>  $this->text(),
+             'PesoHistoria'=>  $this->integer()->notNull(),
+             'Status'=>  $this->integer()->notNull(),
+             'Id_Integrante'=>  $this->integer()->notNull(),
         ],$tableOptions);
          
-         $this->createTable('{{%sprint}}',[
-             'id'=> $this->primaryKey(),
-             'descripcionSprint'=> $this->string()->notNull(),
-             'f_inicio'=> $this->date()->notNull(),
-             'f_final'=>$this->date()->notNull(),
-             'numeroDias'=>  $this->string()->notNull()->unique(),
-            'status'=>$this->string()->notNull()->unique()
+         $this->createTable('{{%Sprints}}',[
+             'Id'=> $this->primaryKey(),
+              'NombreSprint'=>  $this->string()->notNull(),
+             'DescripcionSprint'=>  $this->text(),
+             'Historias'=>$this->string()->notNull(),
+             'F_inicio'=> $this->date()->notNull(),
+             'F_final'=>$this->date()->notNull(),
+             'NumeroDias'=>  $this->integer()->notNull(),
+             'Status'=>$this->string()->notNull(),
+             'Id_Historia'=>  $this->integer()->notNull(),
              
          ],$tableOptions);
          
          
-          $this->addForeignKey('FK_act_proy','integrantes','idHistorias','historias','id');
-        
+          $this->addForeignKey('FK_his_inte_proy','Historias','Id_Integrante','Integrantes','Id');
+          $this->addForeignKey('FK_spr_his_proy','Sprints','Id_Historia','Historias','Id');
+          $this->addForeignKey('FK_admin_user_proy','Administrador','Id_user','user','id');
+          $this->addForeignKey('FK_inte_user_proy','Integrantes','Id_user','user','id');
         
 
     }
@@ -55,10 +65,14 @@ class m160623_213319_scrumA extends Migration
     public function safeDown()
     {
      
-        $this->dropForeignKey('FK_act_proy', 'integrantes');
-        $this->dropTable('{{%integrantes}}');
-         $this->dropTable('{{%historias}}');
-        $this->dropTable('{{%sprint}}');
+        $this->dropForeignKey('FK_his_inte_proy', 'Historias');
+        $this->dropForeignKey('FK_spr_his_proy', 'Sprints');
+        $this->dropForeignKey('FK_admin_user_proy', 'Administrador');
+        $this->dropForeignKey('FK_inte_user_proy', 'Integrantes');
+        $this->dropTable('{{%Administrador}}');
+        $this->dropTable('{{%Integrantes}}');
+         $this->dropTable('{{%Historias}}');
+        $this->dropTable('{{%Sprint}}');
         
         echo "m160623_213319_scrumA cannot be reverted.\n";
 

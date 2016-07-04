@@ -7,15 +7,16 @@ use Yii;
 /**
  * This is the model class for table "historias".
  *
- * @property integer $id
- * @property string $nombreHistoria
- * @property string $numeroHistoria
- * @property string $descripcionHistoria
- * @property string $pesoHistoria
- * @property string $status
- * @property integer $idSprint
+ * @property integer $Id
+ * @property string $NombreHistoria
+ * @property integer $NumeroHistoria
+ * @property string $DescripcionHistoria
+ * @property integer $PesoHistoria
+ * @property integer $Status
+ * @property integer $Id_Integrante
  *
- * @property Integrantes[] $integrantes
+ * @property Integrantes $idIntegrante
+ * @property Sprints[] $sprints
  */
 class Historias extends \yii\db\ActiveRecord
 {
@@ -33,16 +34,12 @@ class Historias extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombreHistoria', 'numeroHistoria', 'pesoHistoria', 'status'], 'required'],
-            [['descripcionHistoria'], 'string'],
-            [['idSprint'], 'integer'],
-            [['nombreHistoria', 'numeroHistoria', 'pesoHistoria', 'status'], 'string', 'max' => 255],
-            [['nombreHistoria'], 'unique'],
-            [['numeroHistoria'], 'unique'],
-            ['numeroHistoria','integer','message'=>'error solo se admiten numeros enteros'],
-            ['pesoHistoria','integer','message'=>'error solo se admiten numeros enteros'],
-            [['pesoHistoria'], 'unique'],
-            [['status'], 'unique'],
+            [['NombreHistoria', 'NumeroHistoria', 'PesoHistoria', 'Status', 'Id_Integrante'], 'required'],
+            [['NumeroHistoria', 'PesoHistoria', 'Status', 'Id_Integrante'], 'integer'],
+            [['DescripcionHistoria'], 'string'],
+            [['NombreHistoria'], 'string', 'max' => 255],
+            [['NumeroHistoria'], 'unique'],
+            [['Id_Integrante'], 'exist', 'skipOnError' => true, 'targetClass' => Integrantes::className(), 'targetAttribute' => ['Id_Integrante' => 'Id']],
         ];
     }
 
@@ -52,21 +49,29 @@ class Historias extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'nombreHistoria' => Yii::t('app', 'Nombre de la Historia'),
-            'numeroHistoria' => Yii::t('app', 'Numero de la Historia'),
-            'descripcionHistoria' => Yii::t('app', 'Descripcion de laHistoria'),
-            'pesoHistoria' => Yii::t('app', 'Peso de la Historia'),
-            'status' => Yii::t('app', 'Status'),
-            'idSprint' => Yii::t('app', 'agregar un encargado'),
+            'Id' => Yii::t('app', 'ID'),
+            'NombreHistoria' => Yii::t('app', 'Nombre Historia'),
+            'NumeroHistoria' => Yii::t('app', 'Numero Historia'),
+            'DescripcionHistoria' => Yii::t('app', 'Descripcion Historia'),
+            'PesoHistoria' => Yii::t('app', 'Peso Historia'),
+            'Status' => Yii::t('app', 'Status'),
+            'Id_Integrante' => Yii::t('app', 'Id  Integrante'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIntegrantes()
+    public function getIdIntegrante()
     {
-        return $this->hasMany(Integrantes::className(), ['idHistorias' => 'id']);
+        return $this->hasOne(Integrantes::className(), ['Id' => 'Id_Integrante']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSprints()
+    {
+        return $this->hasMany(Sprints::className(), ['Id_Historia' => 'Id']);
     }
 }

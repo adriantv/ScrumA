@@ -18,8 +18,8 @@ class HistoriasSearch extends Historias
     public function rules()
     {
         return [
-            [['id', 'idSprint'], 'integer'],
-            [['nombreHistoria', 'numeroHistoria', 'descripcionHistoria', 'pesoHistoria', 'status'], 'safe'],
+            [['Id', 'Id_Integrante'], 'integer'],
+            [['NombreHistoria', 'NumeroHistoria', 'DescripcionHistoria', 'PesoHistoria', 'Status'], 'safe'],
         ];
     }
 
@@ -59,15 +59,15 @@ class HistoriasSearch extends Historias
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'idSprint' => $this->idSprint,
+            'Id' => $this->Id,
+            'Id_Integrante' => $this->Id_Integrante,
         ]);
 
-        $query->andFilterWhere(['like', 'nombreHistoria', $this->nombreHistoria])
-            ->andFilterWhere(['like', 'numeroHistoria', $this->numeroHistoria])
-            ->andFilterWhere(['like', 'descripcionHistoria', $this->descripcionHistoria])
-            ->andFilterWhere(['like', 'pesoHistoria', $this->pesoHistoria])
-            ->andFilterWhere(['like', 'status', $this->status]);
+        $query->andFilterWhere(['like', 'NombreHistoria', $this->NombreHistoria])
+            ->andFilterWhere(['like', 'NumeroHistoria', $this->NumeroHistoria])
+            ->andFilterWhere(['like', 'DescripcionHistoria', $this->DescripcionHistoria])
+            ->andFilterWhere(['like', 'PesoHistoria', $this->PesoHistoria])
+            ->andFilterWhere(['like', 'Status', $this->Status]);
 
         return $dataProvider;
     }

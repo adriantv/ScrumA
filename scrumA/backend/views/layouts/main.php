@@ -35,8 +35,9 @@ AppAsset::register($this);
         ],
     ]);
   $menuItems = [
-           ['label' => 'historias', 'url' => ['/historias/index']],
-           ['label' => 'inetgrantes', 'url' => ['/integrantes/index']],
+           ['label' => 'Historias', 'url' => ['/historias/index']],
+           ['label' => 'Integrantes', 'url' => ['/integrantes/index']],
+           ['label' => 'Administrador', 'url' => ['/administrador/']],
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
     if (Yii::$app->user->isGuest) {

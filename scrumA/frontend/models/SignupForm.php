@@ -11,7 +11,9 @@ class SignupForm extends Model
 {
     public $username;
     public $email;
-    public $password;
+    public $password_hash;
+    public $isNewRecord=true;
+    public $id;
 
 
     /**
@@ -31,8 +33,8 @@ class SignupForm extends Model
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+            ['password_hash', 'required'],
+            ['password_hash', 'string', 'min' => 6],
         ];
     }
 
@@ -50,9 +52,22 @@ class SignupForm extends Model
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
-        $user->setPassword($this->password);
+        $user->setPassword($this->password_hash);
         $user->generateAuthKey();
-        
-        return $user->save() ? $user : null;
+        $user->save() ? $user : null;
+        return $user->id;
+    }
+    
+    public function getAdministradors()
+    {
+        return $this->hasMany(Administrador::className(), ['Id_user' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIntegrantes()
+    {
+        return $this->hasMany(Integrantes::className(), ['Id_user' => 'id']);
     }
 }

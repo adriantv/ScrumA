@@ -18,8 +18,8 @@ class IntegrantesSearch extends Integrantes
     public function rules()
     {
         return [
-            [['Id', 'idHistorias'], 'integer'],
-            [['nombre', 'correo', 'telefono', 'contrasenia'], 'safe'],
+            [['Id', 'Id_user'], 'integer'],
+            [['NombreCompleto', 'Telefono'], 'safe'],
         ];
     }
 
@@ -60,13 +60,11 @@ class IntegrantesSearch extends Integrantes
         // grid filtering conditions
         $query->andFilterWhere([
             'Id' => $this->Id,
-            'idHistorias' => $this->idHistorias,
+            'Id_user' => $this->Id_user,
         ]);
 
-        $query->andFilterWhere(['like', 'nombre', $this->nombre])
-            ->andFilterWhere(['like', 'correo', $this->correo])
-            ->andFilterWhere(['like', 'telefono', $this->telefono])
-            ->andFilterWhere(['like', 'contrasenia', $this->contrasenia]);
+        $query->andFilterWhere(['like', 'NombreCompleto', $this->NombreCompleto])
+            ->andFilterWhere(['like', 'Telefono', $this->Telefono]);
 
         return $dataProvider;
     }
