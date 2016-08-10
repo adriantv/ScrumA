@@ -21,17 +21,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'DescripcionSprint') ?>
 
-    <?= $form->field($model, 'Historias') ?>
-
     <?= $form->field($model, 'F_inicio') ?>
 
-    <?php // echo $form->field($model, 'F_final') ?>
+    <?= $form->field($model, 'F_final') ?>
 
     <?php // echo $form->field($model, 'NumeroDias') ?>
 
     <?php // echo $form->field($model, 'Status') ?>
-
-    <?php // echo $form->field($model, 'Id_Historia') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

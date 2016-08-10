@@ -16,7 +16,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'Telefono')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'Id_user')->textInput() ?>
+    <?= $form->field($model_user, 'username')->textInput() ?>
+    
+    <?= $form->field($model_user, 'password_hash')->passwordInput()?>
+    
+    <?= $form->field($model_user, 'email')->textInput()?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

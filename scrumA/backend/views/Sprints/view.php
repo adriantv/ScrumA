@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Sprints */
 
-$this->title = $model->Id;
+$this->title = $model->NombreSprint;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Sprints'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -28,15 +28,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'Id',
             'NombreSprint',
             'DescripcionSprint:ntext',
-            'Historias',
             'F_inicio',
             'F_final',
-            'NumeroDias',
-            'Status',
-            'Id_Historia',
+            
         ],
     ]) ?>
 

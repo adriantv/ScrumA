@@ -28,10 +28,25 @@ $this->params['breadcrumbs'][] = $this->title;
             'NombreHistoria',
             'NumeroHistoria',
             'PesoHistoria',
-            // 'Status',
-            // 'Id_Integrante',
+           
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template'=>'{view}{update}{delete}{add}{add2}',
+                'buttons'=>[
+                    'add'=> function ($url,$model){
+                        return Html::a('<span class="glyphicon glyphicon-plus"></span>', $url, [
+                            'title' => Yii::t('yii','agregar integrante'),
+                        ]);
+                    },
+                    'add2'=> function ($url,$model){
+                        return Html::a('<span class="glyphicon glyphicon-refresh"></span>', $url, [
+                            'title' => Yii::t('yii','cambiar status'),
+                        ]);
+                    }
+                    ]
+                ],
+                            ],
+                        
     ]); ?>
 </div>

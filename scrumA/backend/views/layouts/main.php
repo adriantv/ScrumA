@@ -2,13 +2,14 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
-
 use backend\assets\AppAsset;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
+use frontend\models\SignupForm;
+
 
 AppAsset::register($this);
 ?>
@@ -35,15 +36,17 @@ AppAsset::register($this);
         ],
     ]);
   $menuItems = [
-           ['label' => 'Historias', 'url' => ['/historias/index']],
-           ['label' => 'Integrantes', 'url' => ['/integrantes/index']],
-           ['label' => 'Administrador', 'url' => ['/administrador/']],
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = '<li>'
+        if(SignupForm::isAdmin(Yii::$app->user->identity->id)){
+             $menuItems[] = ['label' => 'Historias', 'url' => ['/historias/index']];
+            $menuItems[] = ['label' => 'Integrantes', 'url' => ['/integrantes/index']];
+            $menuItems[] = ['label' => 'Administrador', 'url' => ['/administrador/']];
+            $menuItems[] = ['label' => 'Sprints', 'url' => ['/sprints/']];
+            $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
                 'Logout (' . Yii::$app->user->identity->username . ')',
@@ -51,6 +54,19 @@ AppAsset::register($this);
             )
             . Html::endForm()
             . '</li>';
+        }else if(SignupForm::isIntegrante(Yii::$app->user->identity->id)){
+             $menuItems[] = ['label' => 'Historias', 'url' => ['/historias/index']];
+             $menuItems[] = ['label' => 'Sprints', 'url' => ['/sprints/']];
+            $menuItems[] = '<li>'
+            . Html::beginForm(['/site/logout'], 'post')
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn btn-link']
+            )
+            . Html::endForm()
+            . '</li>';
+        }
+        
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],

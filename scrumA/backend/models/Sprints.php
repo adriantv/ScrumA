@@ -10,14 +10,11 @@ use Yii;
  * @property integer $Id
  * @property string $NombreSprint
  * @property string $DescripcionSprint
- * @property string $Historias
  * @property string $F_inicio
  * @property string $F_final
- * @property integer $NumeroDias
  * @property string $Status
- * @property integer $Id_Historia
  *
- * @property Historias $idHistoria
+ * @property Historias[] $historias
  */
 class Sprints extends \yii\db\ActiveRecord
 {
@@ -35,12 +32,11 @@ class Sprints extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['NombreSprint', 'Historias', 'F_inicio', 'F_final', 'NumeroDias', 'Status', 'Id_Historia'], 'required'],
+            [['NombreSprint', 'F_inicio', 'F_final', 'Status'], 'required'],
             [['DescripcionSprint'], 'string'],
             [['F_inicio', 'F_final'], 'safe'],
-            [['NumeroDias', 'Id_Historia'], 'integer'],
-            [['NombreSprint', 'Historias', 'Status'], 'string', 'max' => 255],
-            [['Id_Historia'], 'exist', 'skipOnError' => true, 'targetClass' => Historias::className(), 'targetAttribute' => ['Id_Historia' => 'Id']],
+            [['NumeroDias'], 'integer'],
+            [['NombreSprint', 'Status'], 'string', 'max' => 255],
         ];
     }
 
@@ -53,20 +49,17 @@ class Sprints extends \yii\db\ActiveRecord
             'Id' => Yii::t('app', 'ID'),
             'NombreSprint' => Yii::t('app', 'Nombre Sprint'),
             'DescripcionSprint' => Yii::t('app', 'Descripcion Sprint'),
-            'Historias' => Yii::t('app', 'Historias'),
             'F_inicio' => Yii::t('app', 'F Inicio'),
             'F_final' => Yii::t('app', 'F Final'),
-            'NumeroDias' => Yii::t('app', 'Numero Dias'),
             'Status' => Yii::t('app', 'Status'),
-            'Id_Historia' => Yii::t('app', 'Id  Historia'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIdHistoria()
+    public function getHistorias()
     {
-        return $this->hasOne(Historias::className(), ['Id' => 'Id_Historia']);
+        return $this->hasMany(Historias::className(), ['Id_Sprints' => 'Id']);
     }
 }

@@ -13,7 +13,6 @@ use app\models\Integrantes;
 <div class="historias-form">
 
     <?php $form = ActiveForm::begin(); ?>
-    <?php $integrantes=  ArrayHelper::map(Integrantes::find()->all(),'Id','NombreCompleto')?>
 
     <?= $form->field($model, 'NombreHistoria')->textInput(['maxlength' => true]) ?>
 
@@ -22,17 +21,8 @@ use app\models\Integrantes;
     <?= $form->field($model, 'DescripcionHistoria')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'PesoHistoria')->textInput(['maxlength' => true]) ?>
-
-
-    <?= $form->field($model, 'Id_Integrante')->dropDownList($integrantes) ?>
     
-         <?= $form->field($model, 'Status')->dropDownList($array = array(
-    ""   => "",
-    "1"  => "Por Hacer",
-    "2"  => "En proceso",
-    "3"  => "Echo",
-)); ?>
-
+    
     
 
     <div class="form-group">

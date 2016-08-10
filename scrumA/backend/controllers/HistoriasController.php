@@ -8,7 +8,10 @@ use app\models\search\HistoriasSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use backend\models\Integrantes;
+use yii\filters\AccessControl;
+use frontend\models\SignupForm;
+use yii\db\Expression;
 /**
  * HistoriasController implements the CRUD actions for Historias model.
  */
@@ -20,6 +23,30 @@ class HistoriasController extends Controller
     public function behaviors()
     {
         return [
+            'access'=>[
+                'class'=>  AccessControl::className(),
+                'only'=>['_form','_search','create','add','add2','index','update','view'],
+                'rules'=>[
+                    [
+                      'actions'=>['_form','_search','create','add','add2','index','update','view'], 
+                        'allow'=>true,
+                        'roles'=>['@'],
+                        'matchCallback'=>  function ($rule,$action){
+                            return SignupForm::isIntegrante(Yii::$app->user->identity->id);
+                        },
+                                
+                        ],
+                                [
+                      'actions'=>['_form','_search','create','add','add2','index','update','view'], 
+                        'allow'=>true,
+                        'roles'=>['@'],
+                        'matchCallback'=>  function ($rule,$action){
+                            return SignupForm::isAdmin(Yii::$app->user->identity->id);
+                        },
+                                
+                        ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -55,8 +82,63 @@ class HistoriasController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
+    
+    public function findModelDatos($id){
+        $datos=  Historias::findOne($id);
+        return $datos;
+    }
 
-    /**
+        public function actionAdd($id) {
+        $model = $this->findModel($id);
+       // $model->Id_Integrante=$id_inte;
+        if ($model->load(Yii::$app->request->post()) ) {
+            
+            $model->save();
+            return $this->redirect(['index']);
+        } else {
+            return $this->render('add', [
+                'model' => $model,
+        ]);
+        }         
+ 
+    
+    }
+    
+       public function actionAdd2($id) {
+        $model = $this->findModel($id);
+       // $model->Id_Integrante=$id_inte;
+        if ($model->load(Yii::$app->request->post()) ) {
+            $estado=$model->Status;
+            if($estado == 3){
+                $model->fechafinal=new Expression('NOW()');
+            }
+            $model->save();
+            return $this->redirect(['index']);
+        } else {
+            return $this->render('add2', [
+                'model' => $model,
+            ]);
+        }
+ 
+    
+    }
+    
+    public function actionAgregar($id) {
+        
+        $model = $this->findModel($id);
+      
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
+        } else {
+            return $this->render('index', [
+                'model' => $model,
+            ]);
+        }
+        
+    }
+
+
+        /**
      * Creates a new Historias model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -64,9 +146,10 @@ class HistoriasController extends Controller
     public function actionCreate()
     {
         $model = new Historias();
-
+        //$model->Status=1;
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->Id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -82,8 +165,13 @@ class HistoriasController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
 
+        $model = $this->findModel($id);
+        $model->NombreHistoria=$this->findModelDatos($id)->NombreHistoria;
+        $model->NumeroHistoria=$this->findModelDatos($id)->NumeroHistoria;
+        $model->DescripcionHistoria=$this->findModelDatos($id)->DescripcionHistoria;
+        $model->PesoHistoria=$this->findModelDatos($id)->PesoHistoria;
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->Id]);
         } else {

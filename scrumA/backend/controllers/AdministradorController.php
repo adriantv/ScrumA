@@ -8,7 +8,8 @@ use app\models\Search\AdministradorSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\filters\AccessControl;
+use frontend\models\SignupForm;
 /**
  * AdministradorController implements the CRUD actions for Administrador model.
  */
@@ -20,6 +21,20 @@ class AdministradorController extends Controller
     public function behaviors()
     {
         return [
+            'access'=>[
+                'class'=>  AccessControl::className(),
+                'only'=>['_form','_search','create','graf','index','update','view'],
+                'rules'=>[
+                    [
+                      'actions'=>['_form','_search','create','graf','index','update','view'], 
+                        'allow'=>true,
+                        'roles'=>['@'],
+                        'matchCallback'=>  function ($rule,$action){
+                            return SignupForm::isAdmin(Yii::$app->user->identity->id);
+                        },
+                        ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -63,13 +78,21 @@ class AdministradorController extends Controller
      */
     public function actionCreate()
     {
+        $model_user=new \frontend\models\SignupForm();
         $model = new Administrador();
-
+        $model_user->isNewRecord = true;
+        if($model_user->load(Yii::$app->request->post())){
+            $model_user->rol=1;
+            $model->Id_user=$model_user->signup();
+            
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->Id]);
+            return $this->redirect(['index']);
+        }
+        
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'model_user'=>$model_user,
             ]);
         }
     }
@@ -83,12 +106,16 @@ class AdministradorController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $model_user=new \frontend\models\SignupForm();
+        $model_user->isNewRecord=true;
+        $model_user->obtener($this->findModel($id)->Id_user);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->Id]);
+            $model_user->load(Yii::$app->request->post())&& $model_user->modificarUser($this->findModel($id)->Id_user);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'model_user'=>$model_user,
             ]);
         }
     }
@@ -101,7 +128,10 @@ class AdministradorController extends Controller
      */
     public function actionDelete($id)
     {
+        $id_user=$this->findModel($id)->Id_user;
         $this->findModel($id)->delete();
+        $user=new \frontend\models\SignupForm();
+       $user->obtenerDatos($id_user);
 
         return $this->redirect(['index']);
     }
@@ -120,5 +150,10 @@ class AdministradorController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionGraf() {
+        //return 'paso';
+        return $this->render('graf');
     }
 }

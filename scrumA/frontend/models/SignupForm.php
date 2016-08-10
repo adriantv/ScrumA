@@ -14,6 +14,7 @@ class SignupForm extends Model
     public $password_hash;
     public $isNewRecord=true;
     public $id;
+    public $rol;
 
 
     /**
@@ -32,7 +33,7 @@ class SignupForm extends Model
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
-
+            
             ['password_hash', 'required'],
             ['password_hash', 'string', 'min' => 6],
         ];
@@ -54,8 +55,39 @@ class SignupForm extends Model
         $user->email = $this->email;
         $user->setPassword($this->password_hash);
         $user->generateAuthKey();
+         $user->rol=$this->rol;
         $user->save() ? $user : null;
+       
         return $user->id;
+    }
+    
+    public function modificarUser($id_user){
+        $user= User::findOne($id_user);
+        if($user != null){
+            $user->username=$this->username;
+            $user->email=$this->email;
+            $user->setPassword($this->password_hash);
+            $user->generateAuthKey();
+            $user->save();
+            
+            
+        }
+    }
+   
+      public function obtenerDatos($id_user){
+        $user= User::findOne($id_user);
+        $user->delete();
+        
+    }
+
+        public function obtener($id_user){
+        $user= User::findOne($id_user);
+        if($user != null){
+            $this->username=$user->username;
+            $this->password_hash=$user->password_hash;
+            $this->email=$user->email;
+        }
+        
     }
     
     public function getAdministradors()
@@ -69,5 +101,21 @@ class SignupForm extends Model
     public function getIntegrantes()
     {
         return $this->hasMany(Integrantes::className(), ['Id_user' => 'id']);
+    }
+    
+    public static function isAdmin($id){
+        if(User::findOne(['id'=>$id,'rol'=>1])){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    public static function isIntegrante($id){
+        if(User::findOne(['id'=>$id,'rol'=>2])){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

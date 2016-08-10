@@ -36,26 +36,26 @@ class m160623_213319_scrumA extends Migration
              'NumeroHistoria'=> $this->integer()->notNull()->unique(),
              'DescripcionHistoria'=>  $this->text(),
              'PesoHistoria'=>  $this->integer()->notNull(),
-             'Status'=>  $this->integer()->notNull(),
-             'Id_Integrante'=>  $this->integer()->notNull(),
+             'Status'=>  $this->integer(),
+             'fechafinal'=>$this->date(),
+             'Id_Integrante'=>  $this->integer(),
+             'Id_Sprints'=> $this->integer(),
         ],$tableOptions);
          
          $this->createTable('{{%Sprints}}',[
              'Id'=> $this->primaryKey(),
-              'NombreSprint'=>  $this->string()->notNull(),
+             'NombreSprint'=>  $this->string()->notNull(),
              'DescripcionSprint'=>  $this->text(),
-             'Historias'=>$this->string()->notNull(),
              'F_inicio'=> $this->date()->notNull(),
              'F_final'=>$this->date()->notNull(),
              'NumeroDias'=>  $this->integer()->notNull(),
              'Status'=>$this->string()->notNull(),
-             'Id_Historia'=>  $this->integer()->notNull(),
              
          ],$tableOptions);
          
          
           $this->addForeignKey('FK_his_inte_proy','Historias','Id_Integrante','Integrantes','Id');
-          $this->addForeignKey('FK_spr_his_proy','Sprints','Id_Historia','Historias','Id');
+          $this->addForeignKey('FK_his_spr_proy','Historias','Id_Sprints','Sprints','Id');
           $this->addForeignKey('FK_admin_user_proy','Administrador','Id_user','user','id');
           $this->addForeignKey('FK_inte_user_proy','Integrantes','Id_user','user','id');
         
@@ -66,7 +66,7 @@ class m160623_213319_scrumA extends Migration
     {
      
         $this->dropForeignKey('FK_his_inte_proy', 'Historias');
-        $this->dropForeignKey('FK_spr_his_proy', 'Sprints');
+        $this->dropForeignKey('FK_his_spr_proy', 'Historias');
         $this->dropForeignKey('FK_admin_user_proy', 'Administrador');
         $this->dropForeignKey('FK_inte_user_proy', 'Integrantes');
         $this->dropTable('{{%Administrador}}');

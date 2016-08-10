@@ -14,9 +14,11 @@ use Yii;
  * @property integer $PesoHistoria
  * @property integer $Status
  * @property integer $Id_Integrante
+ * @property integer $Id_Sprints
+ * @property string $fechafinal
  *
  * @property Integrantes $idIntegrante
- * @property Sprints[] $sprints
+ * @property Sprints $idSprints
  */
 class Historias extends \yii\db\ActiveRecord
 {
@@ -34,12 +36,13 @@ class Historias extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['NombreHistoria', 'NumeroHistoria', 'PesoHistoria', 'Status', 'Id_Integrante'], 'required'],
-            [['NumeroHistoria', 'PesoHistoria', 'Status', 'Id_Integrante'], 'integer'],
+            [['NombreHistoria', 'NumeroHistoria', 'PesoHistoria'], 'required'],
+            [['NumeroHistoria', 'PesoHistoria', 'Status', 'Id_Integrante', 'Id_Sprints'], 'integer'],
             [['DescripcionHistoria'], 'string'],
             [['NombreHistoria'], 'string', 'max' => 255],
             [['NumeroHistoria'], 'unique'],
             [['Id_Integrante'], 'exist', 'skipOnError' => true, 'targetClass' => Integrantes::className(), 'targetAttribute' => ['Id_Integrante' => 'Id']],
+            [['Id_Sprints'], 'exist', 'skipOnError' => true, 'targetClass' => Sprints::className(), 'targetAttribute' => ['Id_Sprints' => 'Id']],
         ];
     }
 
@@ -55,9 +58,14 @@ class Historias extends \yii\db\ActiveRecord
             'DescripcionHistoria' => Yii::t('app', 'Descripcion Historia'),
             'PesoHistoria' => Yii::t('app', 'Peso Historia'),
             'Status' => Yii::t('app', 'Status'),
-            'Id_Integrante' => Yii::t('app', 'Id  Integrante'),
+            'Id_Integrante' => Yii::t('app', 'Agregar Integrante'),
+            'Id_Sprints' => Yii::t('app', 'Agregar Historias'),
+            'fechafinal' => Yii::t('app', 'Fecha Final'),
         ];
+        
+        
     }
+  
 
     /**
      * @return \yii\db\ActiveQuery
@@ -70,8 +78,11 @@ class Historias extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSprints()
+    public function getIdSprints()
     {
-        return $this->hasMany(Sprints::className(), ['Id_Historia' => 'Id']);
+        return $this->hasOne(Sprints::className(), ['Id' => 'Id_Sprints']);
     }
+    
+    
+    
 }

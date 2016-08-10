@@ -9,6 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use yii\filters\AccessControl;
+use frontend\models\SignupForm;
 /**
  * IntegrantesController implements the CRUD actions for Integrantes model.
  */
@@ -19,6 +21,20 @@ class IntegrantesController extends Controller {
      */
     public function behaviors() {
         return [
+            'access'=>[
+                'class'=>  AccessControl::className(),
+                'only'=>['_form','_search','create','index','update','view'],
+                'rules'=>[
+                    [
+                      'actions'=>['_form','_search','create','index','update','view'], 
+                        'allow'=>true,
+                        'roles'=>['@'],
+                        'matchCallback'=>  function ($rule,$action){
+                            return SignupForm::isAdmin(Yii::$app->user->identity->id);
+                        },
+                        ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -64,7 +80,7 @@ class IntegrantesController extends Controller {
         $model_user->isNewRecord = true;
         $model = new Integrantes();
         if ($model_user->load(Yii::$app->request->post())) {
-                
+                $model_user->rol=2;
                  $model->Id_user= $model_user->signup() ;
                 if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
@@ -89,12 +105,18 @@ class IntegrantesController extends Controller {
      */
     public function actionUpdate($id) {
         $model = $this->findModel($id);
-
+        $model_user=new \frontend\models\SignupForm();
+        $model_user->isNewRecord=true;
+        $model_user->obtener($this->findModel($id)->Id_user);
+      
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->Id]);
-        } else {
+            $model_user->load(Yii::$app->request->post())&& $model_user->modificarUser($this->findModel($id)->Id_user);
+            return $this->redirect(['index']);
+        
+        }else {
             return $this->render('update', [
                         'model' => $model,
+                        'model_user'=>$model_user,
             ]);
         }
     }
@@ -106,9 +128,13 @@ class IntegrantesController extends Controller {
      * @return mixed
      */
     public function actionDelete($id) {
-        $this->findModel($id)->delete();
-        $this->findModelUser($this->findModel($id)->Id_user)->delete();
-
+       
+       $id_user=$this->findModel($id)->Id_user;
+       $this->findModel($id)->delete();
+       $user=new \frontend\models\SignupForm();
+       $user->obtenerDatos($id_user);
+       
+         
         return $this->redirect(['index']);
     }
 
@@ -127,8 +153,8 @@ class IntegrantesController extends Controller {
         }
     }
     
-    protected function findModelUser(){
-        if (($model = \app\models\User::findOne($id)) !== null) {
+    protected function findModelUsuarios($id){
+        if (($model = app\models\User::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

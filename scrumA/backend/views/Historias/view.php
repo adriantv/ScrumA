@@ -2,11 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\models\Integrantes;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Historias */
 
-$this->title = $model->Id;
+$this->title = $model->NombreHistoria;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Historias'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -25,16 +26,20 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
+    <?php $historia=  \app\models\Historias::findOne($model->Id);?>
+    
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'Id',
             'NombreHistoria',
             'NumeroHistoria',
             'DescripcionHistoria:ntext',
             'PesoHistoria',
             'Status',
-            'Id_Integrante',
+            [
+                'attribute'=>'Nombre del Integrante',
+                'value'=> $model->Id_Integrante ? Integrantes::findOne($model->Id_Integrante)->NombreCompleto:"",
+            ],
         ],
     ]) ?>
 

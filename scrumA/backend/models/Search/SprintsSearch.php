@@ -18,8 +18,8 @@ class SprintsSearch extends Sprints
     public function rules()
     {
         return [
-            [['Id', 'Id_Historia'], 'integer'],
-            [['NombreSprint', 'DescripcionSprint', 'Historias', 'F_inicio', 'F_final', 'NumeroDias', 'Status'], 'safe'],
+            [['Id', 'NumeroDias'], 'integer'],
+            [['NombreSprint', 'DescripcionSprint', 'F_inicio', 'F_final', 'Status'], 'safe'],
         ];
     }
 
@@ -62,13 +62,11 @@ class SprintsSearch extends Sprints
             'Id' => $this->Id,
             'F_inicio' => $this->F_inicio,
             'F_final' => $this->F_final,
-            'Id_Historia' => $this->Id_Historia,
+            'NumeroDias' => $this->NumeroDias,
         ]);
 
         $query->andFilterWhere(['like', 'NombreSprint', $this->NombreSprint])
             ->andFilterWhere(['like', 'DescripcionSprint', $this->DescripcionSprint])
-            ->andFilterWhere(['like', 'Historias', $this->Historias])
-            ->andFilterWhere(['like', 'NumeroDias', $this->NumeroDias])
             ->andFilterWhere(['like', 'Status', $this->Status]);
 
         return $dataProvider;
